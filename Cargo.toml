@@ -3,15 +3,14 @@ name = "phasher"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-dependencies = "Simple CLI program hashing passwords"
+dependencies = "Simple CLI program hashing passwords into PHC strings"
 authors = ["Charles Dong <chardon_cs@proton.me>"]
 repository = "https://github.com/chardoncs/phasher.git"
 
 [dependencies]
 argon2 = { version = "0.5", features = ["simple"] }
-base32 = "0.5"
 base64 = "0.22"
-bcrypt-pbkdf = "0.10"
 clap = { version = "4.5", features = ["derive"] }
+password-hash = "0.5"
 pbkdf2 = { version = "0.12", features = ["simple"] }
 scrypt = { version = "0.11", features = ["simple"] }
