@@ -3,7 +3,7 @@ name = "phasher"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-dependencies = "Simple CLI program hashing passwords into PHC strings"
+description = "Simple CLI program hashing passwords into PHC strings"
 authors = ["Charles Dong <chardon_cs@proton.me>"]
 repository = "https://github.com/chardoncs/phasher.git"
 
