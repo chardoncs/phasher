@@ -9,7 +9,7 @@ repository = "https://github.com/chardoncs/phasher.git"
 
 [dependencies]
 argon2 = { version = "0.5", features = ["simple"] }
-base64 = "0.22"
+base64ct = { version = "^1.6", features = ["alloc"] }
 clap = { version = "4.5", features = ["derive"] }
 password-hash = "0.5"
 pbkdf2 = { version = "0.12", features = ["simple"] }

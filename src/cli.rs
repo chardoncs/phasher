@@ -14,7 +14,4 @@ pub struct Cli {
 
     #[arg(short, long, help = "Salt, a base64 string by default, randomly generated if not specified")]
     pub salt: Option<String>,
-
-    #[arg(long, help = "Flag the salt as a plain string")]
-    pub plain_salt: bool,
 }
