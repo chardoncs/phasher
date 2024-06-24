@@ -1,7 +1,7 @@
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 
-#[derive(Debug)]
 pub enum ErrorKind {
+    Decoding,
     HashGen,
     SaltDecoding,
 }
@@ -9,13 +9,19 @@ pub enum ErrorKind {
 impl Display for ErrorKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match self {
+            Self::Decoding => "Content decoding",
             Self::SaltDecoding => "Salt decoding",
             Self::HashGen => "Hash generation",
         })
     }
 }
 
-#[derive(Debug)]
+impl Debug for ErrorKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self)
+    }
+}
+
 pub struct Error {
     kind: ErrorKind,
     msg: String,
@@ -32,6 +38,12 @@ impl Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[error] {}: {}", self.kind, self.msg)
+        write!(f, "{} ({})", self.kind, self.msg)
+    }
+}
+
+impl Debug for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self)
     }
 }

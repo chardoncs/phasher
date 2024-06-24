@@ -6,15 +6,13 @@ use password_hash::{rand_core::OsRng, PasswordHasher, SaltString};
 use pbkdf2::Pbkdf2;
 use scrypt::Scrypt;
 
-pub fn hash_content(content: &str, alg: &str, salt: Option<&str>) -> Result<String, Error> {
+pub fn hash_content(bytes: &[u8], alg: &str, salt: Option<&str>) -> Result<String, Error> {
     let salt = if let Some(salt) = salt {
         SaltString::from_b64(salt)
             .or(Err(Error::new(ErrorKind::SaltDecoding, "Invalid base64 salt")))?
     } else {
         SaltString::generate(&mut OsRng)
     };
-
-    let bytes = content.as_bytes();
 
     match alg {
         "argon2i" | "argon2d" | "argon2id" => {
