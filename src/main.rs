@@ -13,10 +13,9 @@ fn main() -> Result<(), Error> {
 
     let alg = args.alg
         .map(|alg| alg.to_lowercase())
-        .or(Some("argon2id".to_string()))
-        .unwrap();
+        .unwrap_or("argon2id".to_string());
 
-    let content = if args.base64 {
+    let encoded_content = if args.base64 {
         Some(Base64::decode_vec(args.content.as_str())
             .or(Err(Error::new(ErrorKind::Decoding, "Invalid Base64 string")))?)
     } else {
@@ -26,10 +25,9 @@ fn main() -> Result<(), Error> {
     let salt = args.salt;
 
     let phc = hash_content(
-        content.as_ref()
+        encoded_content.as_ref()
             .map(|content| content.as_slice())
-            .or(Some(args.content.as_bytes()))
-            .unwrap(),
+            .unwrap_or(args.content.as_bytes()),
         alg.as_str(),
         salt.as_ref().map(|s| s.as_str()),
     )?;

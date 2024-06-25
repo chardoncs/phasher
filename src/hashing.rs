@@ -32,5 +32,5 @@ pub fn hash_content(bytes: &[u8], alg: &str, salt: Option<&str>) -> Result<Strin
         _ => {
             Err(Error::new(ErrorKind::HashGen, "Unsupported algorithm"))
         }
-    }.and_then(|result| Ok(result.to_string()))
+    }.map(|result| result.to_string())
 }
