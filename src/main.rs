@@ -31,16 +31,18 @@ fn main() -> Result<(), Error> {
 
     let owned_content_list: Option<Vec<Vec<u8>>>;
     let content_list: Vec<&[u8]> = if args.base64 {
-        owned_content_list = Some(
-            input_lines.iter()
-                .map(|item|
-                    Base64::decode_vec(item.as_str())
-                        .expect("Error: Invalid Base64")
-                )
-                .collect()
-        );
+        let mut list = Vec::new();
 
-        owned_content_list.as_ref().unwrap().iter().map(|vector| vector.as_slice()).collect()
+        for line_ref in input_lines.iter() {
+            list.push(Base64::decode_vec(line_ref.as_str())?);
+        }
+
+        owned_content_list = Some(list);
+        owned_content_list.as_ref()
+            .unwrap()
+            .iter()
+            .map(|vector| vector.as_slice())
+            .collect()
     } else {
         input_lines.iter().map(|item| item.as_bytes()).collect()
     };
@@ -56,7 +58,6 @@ fn main() -> Result<(), Error> {
 
         println!("{phc}");
     }
-
 
     Ok(())
 }
