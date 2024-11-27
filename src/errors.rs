@@ -1,17 +1,24 @@
 use std::fmt::{Debug, Display};
 
 pub enum ErrorKind {
-    Decoding,
+    //Decoding,
     HashGen,
     SaltDecoding,
+    Io(std::io::Error),
 }
 
 impl Display for ErrorKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let buffer: String;
+        
         write!(f, "{}", match self {
-            Self::Decoding => "Content decoding",
+            //Self::Decoding => "Content decoding",
             Self::SaltDecoding => "Salt decoding",
             Self::HashGen => "Hash generation",
+            Self::Io(inner) => {
+                buffer = inner.to_string();
+                buffer.as_str()
+            },
         })
     }
 }
@@ -22,6 +29,7 @@ impl Debug for ErrorKind {
     }
 }
 
+#[derive(Debug)]
 pub struct Error {
     kind: ErrorKind,
     msg: String,
@@ -42,8 +50,10 @@ impl Display for Error {
     }
 }
 
-impl Debug for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
+impl std::error::Error for Error {}
+
+impl From<std::io::Error> for Error {
+    fn from(value: std::io::Error) -> Self {
+        Self::new(ErrorKind::Io(value), "")
     }
 }

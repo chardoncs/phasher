@@ -3,8 +3,8 @@ use clap::Parser;
 #[derive(Debug, Parser)]
 #[command(about, version)]
 pub struct Cli {
-    #[arg(help = "Content to be hashed")]
-    pub content: String,
+    #[arg(help = "Strings to be hashed. Reading from stdin if nothing is provided here")]
+    pub content: Vec<String>,
 
     #[arg(short, long, help = "Flag the content as base64 encoded")]
     pub base64: bool,
