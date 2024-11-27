@@ -1,7 +1,9 @@
+use std::io::BufRead;
+
 use base64ct::{Base64, Encoding};
 use clap::Parser;
 use cli::Cli;
-use errors::{Error, ErrorKind};
+use errors::Error;
 use hashing::hash_content;
 
 mod cli;
@@ -15,24 +17,46 @@ fn main() -> Result<(), Error> {
         .map(|alg| alg.to_lowercase())
         .unwrap_or("argon2id".to_string());
 
-    let encoded_content = if args.base64 {
-        Some(Base64::decode_vec(args.content.as_str())
-            .or(Err(Error::new(ErrorKind::Decoding, "Invalid Base64 string")))?)
+    let input_lines = if args.content.is_empty() {
+        let mut stdin_vec = Vec::new();
+
+        for line in std::io::stdin().lock().lines() {
+            stdin_vec.push(line?);
+        }
+
+        stdin_vec
     } else {
-        None
+        args.content
+    };
+
+    let owned_content_list: Option<Vec<Vec<u8>>>;
+    let content_list: Vec<&[u8]> = if args.base64 {
+        owned_content_list = Some(
+            input_lines.iter()
+                .map(|item|
+                    Base64::decode_vec(item.as_str())
+                        .expect("Error: Invalid Base64")
+                )
+                .collect()
+        );
+
+        owned_content_list.as_ref().unwrap().iter().map(|vector| vector.as_slice()).collect()
+    } else {
+        input_lines.iter().map(|item| item.as_bytes()).collect()
     };
 
     let salt = args.salt;
 
-    let phc = hash_content(
-        encoded_content.as_ref()
-            .map(|content| content.as_slice())
-            .unwrap_or(args.content.as_bytes()),
-        alg.as_str(),
-        salt.as_ref().map(|s| s.as_str()),
-    )?;
+    for bytes_ref in content_list {
+        let phc = hash_content(
+            bytes_ref,
+            alg.as_str(),
+            salt.as_ref().map(|s| s.as_str()),
+        )?;
 
-    println!("{}", phc);
+        println!("{phc}");
+    }
+
 
     Ok(())
 }
